@@ -85,6 +85,7 @@ function handleNewCardSubmit(evt) {
     link: cardLinkInput.value
   };
   const newCardElement = createCard(
+    cardTemplate,
     newCardData, 
     deleteCard, 
     handleLikeClick,
