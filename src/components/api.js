@@ -32,8 +32,8 @@ export const updateUserInfo = (name, about) => {
     method: 'PATCH',
     headers: config.headers,
     body: JSON.stringify({
-      name: name,
-      about: about
+      name,
+      about
     })
   })
     .then(checkResponse);
@@ -44,8 +44,8 @@ export const addNewCard = (name, link) => {
     method: 'POST',
     headers: config.headers,
     body: JSON.stringify({
-      name: name,
-      link: link
+      name,
+      link
     })
   })
     .then(checkResponse);
@@ -75,13 +75,11 @@ export const unlikeCard = (cardId) => {
     .then(checkResponse);
 };
 
-export const updateAvatar = (avatarUrl) => {
+export const updateAvatar = (avatar) => {
   return fetch(`${config.baseUrl}/users/me/avatar`, {
     method: 'PATCH',
     headers: config.headers,
-    body: JSON.stringify({
-      avatar: avatarUrl
-    })
+    body: JSON.stringify({ avatar })
   })
     .then(checkResponse);
 };

@@ -39,8 +39,8 @@
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
-        <input type="text" name="name" id="name-input" class="popup__input popup__input_type_name" placeholder="Имя" required>
-        <input type="text" name="description" id="job-input" class="popup__input popup__input_type_description" placeholder="Занятие" required>
+        <input type="text" name="name" id="name-input" class="popup__input popup__input_type_name" placeholder="Имя" required minlength="2" maxlength="40" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+        <input type="text" name="description" id="job-input" class="popup__input popup__input_type_description" placeholder="Занятие" required minlength="2" maxlength="200" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <button type="submit" class="button popup__button" disabled>Сохранить</button>
       </form>
     </div>
@@ -50,7 +50,7 @@
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
-        <input type="text" name="place-name" id="card-name-input" class="popup__input popup__input_type_card-name" placeholder="Название" required>
+        <input type="text" name="place-name" id="card-name-input" class="popup__input popup__input_type_card-name" placeholder="Название" required minlength="2" maxlength="30" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
         <input type="url" name="link" id="card-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
         <button type="submit" class="button popup__button" disabled>Сохранить</button>
       </form>
@@ -72,6 +72,16 @@
     <form class="popup__form" name="edit-avatar">
       <input type="url" name="avatar" id="avatar-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" required>
       <button type="submit" class="button popup__button">Сохранить</button>
+    </form>
+  </div>
+</div>
+
+<div class="popup popup_type_confirm popup_is-animated">
+  <div class="popup__content popup__content-close">
+    <button type="button" class="popup__close"></button>
+    <h3 class="popup__title">Вы уверены?</h3>
+    <form class="popup__form" name="confirm-form">
+      <button type="submit" class="button popup__button">Да</button>
     </form>
   </div>
 </div>

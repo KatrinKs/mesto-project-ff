@@ -14,7 +14,9 @@ export function createCard(cardTemplate, cardData, userId, deleteCallback, likeC
   if (cardData.owner._id !== userId) {
     deleteButton.remove();
   } else {
-    deleteButton.addEventListener('click', () => deleteCallback(cardData._id, cardElement));
+    deleteButton.addEventListener('click', () => {
+      deleteCallback(cardData._id, cardElement);
+});
   }
   
   const isLiked = cardData.likes?.some(user => user._id === userId) || false;

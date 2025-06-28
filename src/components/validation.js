@@ -33,14 +33,27 @@ function addValidationStyles() {
     }
 
     .popup__form-field {
+      position: relative;
       margin-bottom: 15px;
     }
   `;
   document.head.appendChild(style);
 }
 
+const createErrorElement = (inputElement) => {
+  const errorElement = document.createElement('span');
+  errorElement.classList.add('popup__error');
+  errorElement.classList.add(`${inputElement.id}-error`);
+  return errorElement;
+};
+
 const showInputError = (formElement, inputElement, errorMessage, settings) => {
-  const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  let errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  if (!errorElement) {
+    errorElement = createErrorElement(inputElement);
+    inputElement.parentNode.appendChild(errorElement);
+  }
+  
   inputElement.classList.add(settings.inputErrorClass);
   errorElement.textContent = errorMessage;
   errorElement.classList.add(settings.errorClass);
@@ -48,18 +61,31 @@ const showInputError = (formElement, inputElement, errorMessage, settings) => {
 
 const hideInputError = (formElement, inputElement, settings) => {
   const errorElement = formElement.querySelector(`.${inputElement.id}-error`);
+  if (!errorElement) return;
+  
   inputElement.classList.remove(settings.inputErrorClass);
   errorElement.textContent = '';
   errorElement.classList.remove(settings.errorClass);
 };
 
+const isValidInput = (inputElement) => {
+  if (!inputElement.value.trim()) return true; 
+  const regex = /^[a-zA-Zа-яА-ЯёЁ\s-]+$/;
+  return regex.test(inputElement.value);
+};
+
 const checkInputValidity = (formElement, inputElement, settings) => {
-  if (inputElement.validity.patternMismatch) {
-    inputElement.setCustomValidity(inputElement.dataset.errorMessage);
-  } else if (inputElement.validity.valueMissing) {
+  inputElement.setCustomValidity("");
+  
+  if (inputElement.validity.valueMissing) {
     inputElement.setCustomValidity('Вы пропустили это поле.');
-  } else {
-    inputElement.setCustomValidity("");
+  } 
+  else if (!isValidInput(inputElement)) {
+    inputElement.setCustomValidity(inputElement.dataset.errorMessage || 
+      "Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы");
+  }
+  else if (inputElement.validity.tooShort || inputElement.validity.tooLong) {
+    inputElement.setCustomValidity(`Должно быть от ${inputElement.minLength} до ${inputElement.maxLength} символов`);
   }
 
   if (!inputElement.validity.valid) {
@@ -70,43 +96,43 @@ const checkInputValidity = (formElement, inputElement, settings) => {
 };
 
 const isValidUrl = (urlString) => {
-  if (urlString === '') return false;
+  if (!urlString.trim()) return false;
   try {
-    return Boolean(new URL(urlString));
+    const url = new URL(urlString);
+    return url.protocol === 'http:' || url.protocol === 'https:';
   } catch(e) {
     return false;
   }
 };
 
 const checkUrlInput = (formElement, inputElement, settings) => {
+  inputElement.setCustomValidity("");
+  
   if (inputElement.validity.valueMissing) {
     inputElement.setCustomValidity('Вы пропустили это поле.');
-    showInputError(formElement, inputElement, inputElement.validationMessage, settings);
-    return false;
+  } 
+  else if (!isValidUrl(inputElement.value)) {
+    inputElement.setCustomValidity('Введите корректный URL (начинающийся с http:// или https://)');
   }
-  
-  if (inputElement.value && !isValidUrl(inputElement.value)) {
-    inputElement.setCustomValidity('Введите адрес сайта.');
+
+  if (!inputElement.validity.valid) {
     showInputError(formElement, inputElement, inputElement.validationMessage, settings);
-    return false;
+  } else {
+    hideInputError(formElement, inputElement, settings);
   }
-  
-  inputElement.setCustomValidity("");
-  hideInputError(formElement, inputElement, settings);
-  return true;
 };
 
-const toggleButtonState = (inputList, buttonElement, settings) => {
-  const hasInvalidInput = inputList.some(inputElement => {
-    if (inputElement.validity.valueMissing) return true;
-    if (!inputElement.validity.valid) return true;
+const hasInvalidInput = (inputList) => {
+  return inputList.some(inputElement => {
     if (inputElement.type === 'url') {
       return !isValidUrl(inputElement.value);
     }
-    return false;
+    return !inputElement.validity.valid;
   });
-  
-  if (hasInvalidInput) {
+};
+
+const toggleButtonState = (inputList, buttonElement, settings) => {
+  if (hasInvalidInput(inputList)) {
     buttonElement.classList.add(settings.inactiveButtonClass);
     buttonElement.disabled = true;
   } else {
@@ -118,39 +144,26 @@ const toggleButtonState = (inputList, buttonElement, settings) => {
 const setEventListeners = (formElement, settings) => {
   const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
   const buttonElement = formElement.querySelector(settings.submitButtonSelector);
-  
+
   inputList.forEach(inputElement => {
-    const formField = document.createElement('div');
-    formField.classList.add('popup__form-field');
-    inputElement.parentNode.insertBefore(formField, inputElement);
-    formField.appendChild(inputElement);
-
-    const errorElement = document.createElement('span');
-    errorElement.classList.add('popup__error');
-    errorElement.classList.add(`${inputElement.id}-error`);
-    formField.appendChild(errorElement);
-
-    inputElement.addEventListener('blur', () => {
-      if (inputElement.type === 'url') {
-        checkUrlInput(formElement, inputElement, settings);
-      } else {
-        checkInputValidity(formElement, inputElement, settings);
-      }
-      toggleButtonState(inputList, buttonElement, settings);
-    });
+    const errorElement = createErrorElement(inputElement);
+    inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
   });
 
   toggleButtonState(inputList, buttonElement, settings);
 
   inputList.forEach((inputElement) => {
-    inputElement.addEventListener('input', () => {
+    const validateInput = () => {
       if (inputElement.type === 'url') {
         checkUrlInput(formElement, inputElement, settings);
       } else {
         checkInputValidity(formElement, inputElement, settings);
       }
       toggleButtonState(inputList, buttonElement, settings);
-    });
+    };
+
+    inputElement.addEventListener('input', validateInput);
+    inputElement.addEventListener('blur', validateInput);
   });
 };
 
