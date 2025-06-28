@@ -643,12 +643,14 @@ template {
   border: none;
   width: 100%;
   height: 100%;
-  background-color: transparent;
-  transition: background-color 0.3s ease-in;
+  background: transparent;
+  transition: background 0.3s ease-in;
+  position: relative;
 }
 
 .profile__image-edit:hover {
-  background-color: #000000CC;
+  background: rgba(0, 0, 0, 0.8) center center no-repeat url(6c7bf05444b9793fdf6e.svg);
+  background-size: 26px;
 }
 
 @media screen and (max-width: 740px) {
