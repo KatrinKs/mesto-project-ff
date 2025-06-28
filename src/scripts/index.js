@@ -203,6 +203,10 @@ function fillProfileForm() {
   elements.nameInput.value = elements.profileTitle.textContent;
   elements.jobInput.value = elements.profileDescription.textContent;
   clearValidation(elements.formElement, validationConfig);
+
+  const buttonElement = elements.formElement.querySelector(validationConfig.submitButtonSelector);
+  buttonElement.classList.remove(validationConfig.inactiveButtonClass);
+  buttonElement.disabled = false;
 }
 
 function setEventListeners() {
