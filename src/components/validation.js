@@ -1,52 +1,3 @@
-function addValidationStyles() {
-  const style = document.createElement('style');
-  style.textContent = `
-    .popup__error {
-      color: #FF0000;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.25;
-      margin: 5px 0 0;
-      min-height: 12px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      display: block;
-    }
-
-    .popup__error_visible {
-      opacity: 1;
-    }
-
-    .popup__input_type_error {
-      border-bottom-color: #FF0000;
-    }
-
-    .popup__button_disabled {
-      background-color: #E5E5E5;
-      color: #000000;
-      opacity: 0.2;
-      cursor: default;
-    }
-
-    .popup__button_disabled:hover {
-      opacity: 0.2;
-    }
-
-    .popup__form-field {
-      position: relative;
-      margin-bottom: 15px;
-    }
-  `;
-  document.head.appendChild(style);
-}
-
-const createErrorElement = (inputElement) => {
-  const errorElement = document.createElement('span');
-  errorElement.classList.add('popup__error');
-  errorElement.classList.add(`${inputElement.id}-error`);
-  return errorElement;
-};
-
 const showInputError = (formElement, inputElement, errorMessage, settings) => {
   let errorElement = formElement.querySelector(`.${inputElement.id}-error`);
   if (!errorElement) {
@@ -112,7 +63,7 @@ const checkUrlInput = (formElement, inputElement, settings) => {
     inputElement.setCustomValidity('Вы пропустили это поле.');
   } 
   else if (!isValidUrl(inputElement.value)) {
-    inputElement.setCustomValidity('Введите корректный URL (начинающийся с http:// или https://)');
+    inputElement.setCustomValidity('Введите адрес сайта.');
   }
 
   if (!inputElement.validity.valid) {
@@ -131,7 +82,7 @@ const hasInvalidInput = (inputList) => {
   });
 };
 
-const toggleButtonState = (inputList, buttonElement, settings) => {
+export const toggleButtonState = (inputList, buttonElement, settings) => {
   if (hasInvalidInput(inputList)) {
     buttonElement.classList.add(settings.inactiveButtonClass);
     buttonElement.disabled = true;
@@ -144,11 +95,6 @@ const toggleButtonState = (inputList, buttonElement, settings) => {
 const setEventListeners = (formElement, settings) => {
   const inputList = Array.from(formElement.querySelectorAll(settings.inputSelector));
   const buttonElement = formElement.querySelector(settings.submitButtonSelector);
-
-  inputList.forEach(inputElement => {
-    const errorElement = createErrorElement(inputElement);
-    inputElement.parentNode.insertBefore(errorElement, inputElement.nextSibling);
-  });
 
   toggleButtonState(inputList, buttonElement, settings);
 
@@ -168,8 +114,6 @@ const setEventListeners = (formElement, settings) => {
 };
 
 export const enableValidation = (settings) => {
-  addValidationStyles();
-
   const formList = Array.from(document.querySelectorAll(settings.formSelector));
   formList.forEach((formElement) => {
     formElement.addEventListener('submit', (evt) => {

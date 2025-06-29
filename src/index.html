@@ -5,6 +5,7 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="data:,">
   <title>Mesto</title>
 </head>
 <body class="page">
@@ -34,28 +35,43 @@
       © 2025 Mesto Russia
     </p>
   </footer>
+
   <div class="popup popup_type_edit popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Редактировать профиль</h3>
       <form class="popup__form" name="edit-profile">
-        <input type="text" name="name" id="name-input" class="popup__input popup__input_type_name" placeholder="Имя" required minlength="2" maxlength="40" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
-        <input type="text" name="description" id="job-input" class="popup__input popup__input_type_description" placeholder="Занятие" required minlength="2" maxlength="200" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+        <div class="popup__form-field">
+          <input type="text" name="name" id="name-input" class="popup__input popup__input_type_name" placeholder="Имя" required minlength="2" maxlength="40" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+          <span class="popup__error name-input-error"></span>
+        </div>
+        <div class="popup__form-field">
+          <input type="text" name="description" id="job-input" class="popup__input popup__input_type_description" placeholder="Занятие" required minlength="2" maxlength="200" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+          <span class="popup__error job-input-error"></span>
+        </div>
         <button type="submit" class="button popup__button" disabled>Сохранить</button>
       </form>
     </div>
   </div>
+
   <div class="popup popup_type_new-card popup_is-animated">
     <div class="popup__content">
       <button type="button" class="popup__close"></button>
       <h3 class="popup__title">Новое место</h3>
       <form class="popup__form" name="new-place">
-        <input type="text" name="place-name" id="card-name-input" class="popup__input popup__input_type_card-name" placeholder="Название" required minlength="2" maxlength="30" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
-        <input type="url" name="link" id="card-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+        <div class="popup__form-field">
+          <input type="text" name="place-name" id="card-name-input" class="popup__input popup__input_type_card-name" placeholder="Название" required minlength="2" maxlength="30" data-error-message="Разрешены только латинские, кириллические буквы, знаки дефиса и пробелы">
+          <span class="popup__error card-name-input-error"></span>
+        </div>
+        <div class="popup__form-field">
+          <input type="url" name="link" id="card-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на картинку" required>
+          <span class="popup__error card-link-input-error"></span>
+        </div>
         <button type="submit" class="button popup__button" disabled>Сохранить</button>
       </form>
     </div>
   </div>
+
   <div class="popup popup_type_image popup_is-animated">
     <div class="popup__content popup__content_content_image">
       <button type="button" class="popup__close"></button>
@@ -69,8 +85,11 @@
   <div class="popup__content">
     <button type="button" class="popup__close"></button>
     <h3 class="popup__title">Обновить аватар</h3>
-    <form class="popup__form" name="edit-avatar">
-      <input type="url" name="avatar" id="avatar-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" required>
+    <form class="popup__form" name="edit-avatar" novalidate>
+      <div class="popup__form-field">
+        <input type="url" name="avatar" id="avatar-link-input" class="popup__input popup__input_type_url" placeholder="Ссылка на аватар" required pattern="https?://.+">
+        <span class="popup__error avatar-link-input-error"></span>
+      </div>
       <button type="submit" class="button popup__button">Сохранить</button>
     </form>
   </div>

@@ -13,73 +13,57 @@ function checkResponse(res) {
   return Promise.reject(`Ошибка: ${res.status}`);
 }
 
+function request(endpoint, options = {}) {
+  // Добавляем базовые заголовки, если они не переданы
+  options.headers = options.headers || config.headers;
+  // Формируем полный URL
+  const url = `${config.baseUrl}${endpoint}`;
+  return fetch(url, options).then(checkResponse);
+}
+
 export const getUserInfo = () => {
-  return fetch(`${config.baseUrl}/users/me`, {
-    headers: config.headers
-  })
-    .then(checkResponse);
+  return request('/users/me');
 };
 
 export const getInitialCards = () => {
-  return fetch(`${config.baseUrl}/cards`, {
-    headers: config.headers
-  })
-    .then(checkResponse);
+  return request('/cards');
 };
 
 export const updateUserInfo = (name, about) => {
-  return fetch(`${config.baseUrl}/users/me`, {
+  return request('/users/me', {
     method: 'PATCH',
-    headers: config.headers,
-    body: JSON.stringify({
-      name,
-      about
-    })
-  })
-    .then(checkResponse);
+    body: JSON.stringify({ name, about })
+  });
 };
 
 export const addNewCard = (name, link) => {
-  return fetch(`${config.baseUrl}/cards`, {
+  return request('/cards', {
     method: 'POST',
-    headers: config.headers,
-    body: JSON.stringify({
-      name,
-      link
-    })
-  })
-    .then(checkResponse);
+    body: JSON.stringify({ name, link })
+  });
 };
 
 export const deleteCard = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers
-  })
-    .then(checkResponse);
+  return request(`/cards/${cardId}`, {
+    method: 'DELETE'
+  });
 };
 
 export const likeCard = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'PUT',
-    headers: config.headers
-  })
-    .then(checkResponse);
+  return request(`/cards/likes/${cardId}`, {
+    method: 'PUT'
+  });
 };
 
 export const unlikeCard = (cardId) => {
-  return fetch(`${config.baseUrl}/cards/likes/${cardId}`, {
-    method: 'DELETE',
-    headers: config.headers
-  })
-    .then(checkResponse);
+  return request(`/cards/likes/${cardId}`, {
+    method: 'DELETE'
+  });
 };
 
 export const updateAvatar = (avatar) => {
-  return fetch(`${config.baseUrl}/users/me/avatar`, {
+  return request('/users/me/avatar', {
     method: 'PATCH',
-    headers: config.headers,
     body: JSON.stringify({ avatar })
-  })
-    .then(checkResponse);
+  });
 };

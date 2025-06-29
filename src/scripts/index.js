@@ -1,5 +1,5 @@
 import '../pages/index.css';
-import { enableValidation, clearValidation } from '../components/validation';
+import { enableValidation, clearValidation, toggleButtonState } from '../components/validation';
 import { createCard } from '../components/card';
 import { 
   getUserInfo, 
@@ -40,9 +40,9 @@ const selectors = {
   jobInput: '.popup__input_type_description',
   newCardForm: '.popup__form[name="new-place"]',
   cardNameInput: '.popup__input_type_card-name',
-  cardLinkInput: '.popup__input_type_url',
+  cardLinkInput: '#card-link-input',
   avatarForm: '.popup__form[name="edit-avatar"]',
-  avatarLinkInput: '.popup__input_type_url',
+  avatarLinkInput: '#avatar-link-input',
   popupImage: '.popup__image',
   popupCaption: '.popup__caption',
   confirmPopup: '.popup_type_confirm',
@@ -86,7 +86,6 @@ function renderCards(cards) {
         currentCardToDelete = { cardId, cardElement };
         openConfirmPopup();
       },
-      // handleDeleteCard, 
       handleLikeCard, 
       openImagePopup
     );
@@ -96,7 +95,7 @@ function renderCards(cards) {
 
 function handleProfileFormSubmit(evt) {
   evt.preventDefault();
-  const submitButton = evt.target.querySelector('.popup__button');
+  const submitButton = evt.submitter;
   submitButton.textContent = 'Сохранение...';
   
   updateUserInfo(
@@ -113,7 +112,7 @@ function handleProfileFormSubmit(evt) {
 
 function handleNewCardSubmit(evt) {
   evt.preventDefault();
-  const submitButton = evt.target.querySelector('.popup__button');
+  const submitButton = evt.submitter;
   submitButton.textContent = 'Создание...';
   
   addNewCard(
@@ -130,13 +129,12 @@ function handleNewCardSubmit(evt) {
           currentCardToDelete = { cardId, cardElement };
           openConfirmPopup();
         },
-        // handleDeleteCard,
         handleLikeCard,
         openImagePopup
       );
       elements.cardsContainer.prepend(cardElement);
       closePopup(elements.newCardPopup);
-      elements.newCardForm.reset();
+      evt.target.reset();
       clearValidation(elements.newCardForm, validationConfig);
     })
     .catch(err => console.error('Ошибка добавления карточки:', err))
@@ -145,22 +143,17 @@ function handleNewCardSubmit(evt) {
 
 function handleAvatarFormSubmit(evt) {
   evt.preventDefault();
-  const submitButton = evt.target.querySelector('.popup__button');
+  const submitButton = evt.submitter;
   submitButton.textContent = 'Сохранение...';
-  
+
   updateAvatar(elements.avatarLinkInput.value)
     .then(userData => {
       elements.profileImage.style.backgroundImage = `url(${userData.avatar})`;
       closePopup(elements.avatarPopup);
-      elements.avatarForm.reset();
+      evt.target.reset();
     })
     .catch(err => console.error('Ошибка обновления аватара:', err))
     .finally(() => submitButton.textContent = 'Сохранить');
-}
-
-function handleDeleteCard(cardId, cardElement) {
-  currentCardToDelete = { cardId, cardElement };
-  openConfirmPopup();
 }
 
 function handleConfirmDelete() {
@@ -204,9 +197,9 @@ function fillProfileForm() {
   elements.jobInput.value = elements.profileDescription.textContent;
   clearValidation(elements.formElement, validationConfig);
 
+  const inputList = Array.from(elements.formElement.querySelectorAll(validationConfig.inputSelector));
   const buttonElement = elements.formElement.querySelector(validationConfig.submitButtonSelector);
-  buttonElement.classList.remove(validationConfig.inactiveButtonClass);
-  buttonElement.disabled = false;
+  toggleButtonState(inputList, buttonElement, validationConfig);
 }
 
 function setEventListeners() {
